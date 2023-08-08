@@ -1,4 +1,5 @@
 import {
+  Alert,
   KeyboardAvoidingView,
   Pressable,
   StyleSheet,
@@ -8,6 +9,7 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
 
 const RegisterScreen = () => {
   const [name, setName] = useState("");
@@ -15,6 +17,37 @@ const RegisterScreen = () => {
   const [password, setPassword] = useState("");
   const [image, setImage] = useState("");
   const navigation = useNavigation();
+
+  const handleRegister = () => {
+    const user = {
+      name: name,
+      email: email,
+      password: password,
+      image: image,
+    };
+
+    //send a post request to the backend api to register user
+    axios
+      .post("http://localhost:8000/register", user)
+      .then((response) => {
+        console.log(response);
+        Alert.alert(
+          "Registration Successful",
+          "You have been registered Successfully"
+        );
+        setName("");
+        setEmail("");
+        setPassword("");
+        setImage("");
+      })
+      .catch((error) => {
+        Alert.alert(
+          "Registration Error",
+          "An error occured while registering",
+          error
+        );
+      });
+  };
   return (
     <View
       style={{
@@ -43,7 +76,7 @@ const RegisterScreen = () => {
         <View style={{ marginTop: 50 }}>
           <View>
             <Text style={{ fontSize: 18, fontWeight: "600", color: "gray" }}>
-             Name
+              Name
             </Text>
             <TextInput
               value={name}
@@ -98,26 +131,27 @@ const RegisterScreen = () => {
             />
           </View>
           <View style={{ marginTop: 30 }}>
-          <View>
-            <Text style={{ fontSize: 18, fontWeight: "600", color: "gray" }}>
-              Image
-            </Text>
-            <TextInput
-              value={image}
-              onChangeText={(text) => setImage(text)}
-              style={{
-                fontSize: email ? 18 : 18,
-                borderBottomColor: "gray",
-                borderBottomWidth: 1,
-                marginVertical: 10,
-                width: 300,
-              }}
-              placeholder="Choose Image"
-            />
+            <View>
+              <Text style={{ fontSize: 18, fontWeight: "600", color: "gray" }}>
+                Image
+              </Text>
+              <TextInput
+                value={image}
+                onChangeText={(text) => setImage(text)}
+                style={{
+                  fontSize: email ? 18 : 18,
+                  borderBottomColor: "gray",
+                  borderBottomWidth: 1,
+                  marginVertical: 10,
+                  width: 300,
+                }}
+                placeholder="Choose Image"
+              />
+            </View>
           </View>
-        </View>
 
           <Pressable
+            onPress={handleRegister}
             style={{
               width: 200,
               backgroundColor: "#4a55a2",
